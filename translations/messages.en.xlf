@@ -29,6 +29,18 @@
         <source>sign.in</source>
         <target>Sign in</target>
       </trans-unit>
+      <trans-unit id="r8IwTDg" resname="form.label.title">
+        <source>form.label.title</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="2UrEADQ" resname="form.label.content">
+        <source>form.label.content</source>
+        <target>Content</target>
+      </trans-unit>
+      <trans-unit id="Am_Um.n" resname="form.label.btn.create_new_post">
+        <source>form.label.btn.create_new_post</source>
+        <target>Create new post</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

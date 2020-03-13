@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Post;
+use App\Form\PostType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,8 +26,12 @@ class PostController extends AbstractController
      */
     public function index(Request $request)
     {
+        $post = new Post();
+        $form = $this->createForm(PostType::class, $post);
+
         return $this->render('post/index.html.twig', [
             'controller_name' => 'PostController',
+            'form' => $form->createView()
         ]);
     }
 }

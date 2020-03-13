@@ -29,6 +29,18 @@
         <source>sign.in</source>
         <target>Увійти</target>
       </trans-unit>
+      <trans-unit id="r8IwTDg" resname="form.label.title">
+        <source>form.label.title</source>
+        <target>Заголовок</target>
+      </trans-unit>
+      <trans-unit id="2UrEADQ" resname="form.label.content">
+        <source>form.label.content</source>
+        <target>Вміст</target>
+      </trans-unit>
+      <trans-unit id="Am_Um.n" resname="form.label.btn.create_new_post">
+        <source>form.label.btn.create_new_post</source>
+        <target>Створити новий допис</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>
