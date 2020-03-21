@@ -41,6 +41,14 @@
         <source>form.label.btn.create_new_post</source>
         <target>Створити новий допис</target>
       </trans-unit>
+      <trans-unit id="ruQIhH0" resname="success">
+        <source>success</source>
+        <target>Успіх!</target>
+      </trans-unit>
+      <trans-unit id="BjWPqjM" resname="post.toast.creation_success">
+        <source>post.toast.creation_success</source>
+        <target>Ваш допис було створено успішно!</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

@@ -41,6 +41,14 @@
         <source>form.label.btn.create_new_post</source>
         <target>Create new post</target>
       </trans-unit>
+      <trans-unit id="ruQIhH0" resname="success">
+        <source>success</source>
+        <target>Success!</target>
+      </trans-unit>
+      <trans-unit id="BjWPqjM" resname="post.toast.creation_success">
+        <source>post.toast.creation_success</source>
+        <target>Your post was created successfully!</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

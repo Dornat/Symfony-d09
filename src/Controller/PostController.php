@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Form\PostType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,10 +13,10 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class PostController
  * @package App\Controller
  * @Route(
- *     "/{_locale}/page",
+ *     "/{_locale}/post",
  * )
  */
-class PostController extends AbstractController
+class PostController extends BaseController
 {
 
     /**
@@ -29,9 +29,44 @@ class PostController extends AbstractController
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
 
+        $em = $this->getEntityManager();
+        $posts = $em->getRepository(Post::class)->findBy([], ['createdAt' => 'DESC']);
+
+        if ($request->isXmlHttpRequest()) {
+            return new JsonResponse(
+                $this->renderView('post/index.html.twig', [
+                    'form' => $form->createView(),
+                    'posts' => $posts,
+                ])
+            );
+        }
+
         return $this->render('post/index.html.twig', [
             'controller_name' => 'PostController',
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'posts' => $posts,
         ]);
+    }
+
+    /**
+     * @Route("/new", name="post_new", methods={"POST"})
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function new(Request $request)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $content = $request->request->get('post');
+
+        $post = new Post();
+        $post->setAuthor($this->getUser());
+        $post->setTitle($content['title']);
+        $post->setContent($content['content']);
+
+        $em = $this->getEntityManager();
+        $em->persist($post);
+        $em->flush();
+
+        return new JsonResponse('ok');
     }
 }

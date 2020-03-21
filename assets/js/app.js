@@ -8,6 +8,7 @@
 // any CSS you import will output into a single css file (app.css in this case)
 import '../css/app.css';
 import $ from 'jquery';
+import 'bootstrap';
 
 const $mc = $('#main-container');
 const isAuthenticated = $mc.data('is-authenticated');
@@ -28,3 +29,17 @@ $mc.on('submit', '#login-form', function (e) {
     });
 });
 
+$mc.on('submit', '#post-form', function (e) {
+    e.preventDefault();
+
+    $.post($(this).attr('action'), $(this).serialize(), function (data) {
+        if (data === 'ok') {
+            $.get($('.jq-home').attr('href'), function (data) {
+                $mc.html(data);
+                $('.jq-toast-post-success').toast('show');
+            });
+        }
+    }).fail(function (data) {
+        console.log(data);
+    });
+});
