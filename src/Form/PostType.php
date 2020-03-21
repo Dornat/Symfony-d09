@@ -17,9 +17,15 @@ class PostType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'label' => 'form.label.title',
+                'attr' => [
+                    'class' => 'form-control'
+                ],
             ])
             ->add('content', TextareaType::class, [
                 'label' => 'form.label.content',
+                'attr' => [
+                    'class' => 'form-control'
+                ],
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'form.label.btn.create_new_post',
@@ -31,6 +37,7 @@ class PostType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Post::class,
+            'csrf_protection' => false
         ]);
     }
 }

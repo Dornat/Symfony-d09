@@ -7,6 +7,7 @@ use App\Form\PostType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -56,12 +57,25 @@ class PostController extends BaseController
     public function new(Request $request)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $content = $request->request->get('post');
 
-        $post = new Post();
+        $data = json_decode($request->getContent(), true);
+
+        if (is_null($data)) {
+            throw new BadRequestHttpException('Invalid JSON.');
+        }
+
+        $form = $this->createForm(PostType::class, null);
+
+        $form->submit($data);
+
+        if (!$form->isValid()) {
+            $error = $this->getErrorsFromForm($form);
+            return $this->createApiResponse($error, 400);
+        }
+
+        /** @var Post $post */
+        $post = $form->getData();
         $post->setAuthor($this->getUser());
-        $post->setTitle($content['title']);
-        $post->setContent($content['content']);
 
         $em = $this->getEntityManager();
         $em->persist($post);

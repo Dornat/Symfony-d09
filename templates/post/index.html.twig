@@ -7,12 +7,12 @@
         {{ form_start(form, {'attr': {'id': 'post-form'}, 'action': path('post_new')}) }}
         <div class="form-group">
             {{ form_label(form.title) }}
-            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.title, {'full_name': 'title'}) }}
         </div>
 
         <div class="form-group">
             {{ form_label(form.content) }}
-            {{ form_widget(form.content, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.content, {'full_name': 'content'}) }}
         </div>
         {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
         {{ form_end(form) }}

@@ -31,15 +31,34 @@ $mc.on('submit', '#login-form', function (e) {
 
 $mc.on('submit', '#post-form', function (e) {
     e.preventDefault();
+    const $form = $(this);
 
-    $.post($(this).attr('action'), $(this).serialize(), function (data) {
+    const formData = {};
+    $.each($(this).serializeArray(), function (key, fieldData) {
+        formData[fieldData.name] = fieldData.value
+    });
+
+    $('.jq-post-form-error').remove();
+    $.post($(this).attr('action'), JSON.stringify(formData), function (data) {
         if (data === 'ok') {
             $.get($('.jq-home').attr('href'), function (data) {
                 $mc.html(data);
                 $('.jq-toast-post-success').toast('show');
             });
         }
-    }).fail(function (data) {
-        console.log(data);
+    }).fail(function (jqXHR) {
+        const errors = JSON.parse(jqXHR.responseText);
+        $form.find(':input').each(function () {
+            const fieldName = $(this).attr('name');
+            const formGroup = $(this).closest('.form-group');
+
+            if (!errors.hasOwnProperty(fieldName)) {
+                return;
+            }
+
+            const $alert = $('<div class="alert alert-danger mt-1 jq-post-form-error" role="alert"></div>');
+            $alert.html(errors[fieldName]);
+            formGroup.append($alert);
+        });
     });
 });
