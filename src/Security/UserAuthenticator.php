@@ -5,12 +5,15 @@ namespace App\Security;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 use Symfony\Component\Security\Core\Security;
@@ -21,6 +24,7 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
+use Symfony\Component\Serializer\SerializerInterface as Serializer;
 
 class UserAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
@@ -30,13 +34,15 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
     private $urlGenerator;
     private $csrfTokenManager;
     private $passwordEncoder;
+    private $serializer;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, Serializer $serializer)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
+        $this->serializer = $serializer;
     }
 
     public function supports(Request $request)
@@ -47,11 +53,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
 
     public function getCredentials(Request $request)
     {
-        $credentials = [
-            'username' => $request->request->get('username'),
-            'password' => $request->request->get('password'),
-            'csrf_token' => $request->request->get('_csrf_token'),
-        ];
+        $credentials = json_decode($request->getContent(), true);
         $request->getSession()->set(
             Security::LAST_USERNAME,
             $credentials['username']
@@ -62,7 +64,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $token = new CsrfToken('authenticate', $credentials['csrf_token']);
+        $token = new CsrfToken('authenticate', $credentials['_csrf_token']);
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
@@ -97,7 +99,6 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
      * @param TokenInterface $token
      * @param string $providerKey
      * @return RedirectResponse|Response|null
-     * @throws Exception
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
@@ -106,7 +107,22 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
         }
 
         return new RedirectResponse($this->urlGenerator->generate('app_default'));
-//        return new Response('Authenticated');
+    }
+
+    /**
+     * @param Request $request
+     * @param AuthenticationException $exception
+     * @return JsonResponse|RedirectResponse
+     */
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    {
+        if ($exception instanceof BadCredentialsException) {
+            $message = 'Bad credentials.';
+        } else {
+            $message = $exception->getMessage();
+        }
+
+        return new JsonResponse($this->serializer->serialize(['message' => $message], 'json'), 400, [], true);
     }
 
     protected function getLoginUrl()

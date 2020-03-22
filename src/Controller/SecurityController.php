@@ -12,23 +12,16 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     /**
-     * @Route("/login", name="app_login")
-     * @param AuthenticationUtils $authenticationUtils
+     * @Route("/login", name="app_login", methods={"POST"})
      * @param Request $request
      * @return Response
      */
-    public function login(AuthenticationUtils $authenticationUtils, Request $request): Response
+    public function login(Request $request): Response
     {
-        if (!$request->isXmlHttpRequest()) {
-            throw $this->createNotFoundException('Page not found');
-        }
-
-        $error = $authenticationUtils->getLastAuthenticationError();
-        $lastUsername = $authenticationUtils->getLastUsername();
+        $user = $this->getUser();
 
         return new Response(
-            $this->renderView('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]),
-            $error ? '500' : 200
+            $this->renderView('security/login.html.twig', [])
         );
     }
 

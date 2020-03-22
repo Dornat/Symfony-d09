@@ -49,6 +49,26 @@
         <source>post.toast.creation_success</source>
         <target>Your post was created successfully!</target>
       </trans-unit>
+      <trans-unit id="VncbVKe" resname="post.view_details">
+        <source>post.view_details</source>
+        <target>Vew post details</target>
+      </trans-unit>
+      <trans-unit id="NT9iN6W" resname="post.details">
+        <source>post.details</source>
+        <target>Post details</target>
+      </trans-unit>
+      <trans-unit id="A9h6ogR" resname="post.author">
+        <source>post.author</source>
+        <target>Author</target>
+      </trans-unit>
+      <trans-unit id="WGD9_Y6" resname="post.created_at">
+        <source>post.created_at</source>
+        <target>Created</target>
+      </trans-unit>
+      <trans-unit id="Toz5JEc" resname="post.updated_at">
+        <source>post.updated_at</source>
+        <target>Updated</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

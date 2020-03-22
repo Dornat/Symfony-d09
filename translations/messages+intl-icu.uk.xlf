@@ -49,6 +49,26 @@
         <source>post.toast.creation_success</source>
         <target>Ваш допис було створено успішно!</target>
       </trans-unit>
+      <trans-unit id="VncbVKe" resname="post.view_details">
+        <source>post.view_details</source>
+        <target>Подивитись деталі допису</target>
+      </trans-unit>
+      <trans-unit id="NT9iN6W" resname="post.details">
+        <source>post.details</source>
+        <target>Деталі допису</target>
+      </trans-unit>
+      <trans-unit id="A9h6ogR" resname="post.author">
+        <source>post.author</source>
+        <target>Автор</target>
+      </trans-unit>
+      <trans-unit id="WGD9_Y6" resname="post.created_at">
+        <source>post.created_at</source>
+        <target>Створено</target>
+      </trans-unit>
+      <trans-unit id="Toz5JEc" resname="post.updated_at">
+        <source>post.updated_at</source>
+        <target>Змінено</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

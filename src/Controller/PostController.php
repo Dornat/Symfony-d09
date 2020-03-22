@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Form\PostType;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -82,5 +83,19 @@ class PostController extends BaseController
         $em->flush();
 
         return new JsonResponse('ok');
+    }
+
+    /**
+     * @Route("/view/{id}", name="post_view", methods={"POST"})
+     * @param Post $post
+     * @return JsonResponse
+     */
+    public function view(Post $post)
+    {
+        return new JsonResponse(
+            $this->renderView('post/details.html.twig', [
+                'post' => $post,
+            ])
+        );
     }
 }
