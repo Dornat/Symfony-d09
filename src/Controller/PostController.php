@@ -98,4 +98,21 @@ class PostController extends BaseController
             ])
         );
     }
+
+    /**
+     * @Route("/delete/{id}", name="post_delete", methods={"POST"})
+     * @param Post $post
+     * @return JsonResponse
+     */
+    public function delete(Post $post)
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $postId = $post->getId();
+
+        $em = $this->getEntityManager();
+        $em->remove($post);
+        $em->flush();
+
+        return new JsonResponse(['status' => 'ok', 'post_id' => $postId]);
+    }
 }

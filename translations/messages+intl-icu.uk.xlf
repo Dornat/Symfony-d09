@@ -69,6 +69,14 @@
         <source>post.updated_at</source>
         <target>Змінено</target>
       </trans-unit>
+      <trans-unit id="upyVq0x" resname="post.delete.are_you_sure">
+        <source>post.delete.are_you_sure</source>
+        <target>Ви впевнені, що хочете видалити цей допис?</target>
+      </trans-unit>
+      <trans-unit id="iKPTmwQ" resname="post.delete">
+        <source>post.delete</source>
+        <target>Видалити</target>
+      </trans-unit>
     </body>
   </file>
 </xliff>

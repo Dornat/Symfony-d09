@@ -35,6 +35,9 @@
 </div>
 
 <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-    <button type="button" class="btn btn-primary">Save changes</button>
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <button type="button" class="btn btn-danger jq-post-delete" data-post-delete-url="{{ path('post_delete', {id: post.id}) }}">{{ 'post.delete'|trans() }}</button>
+    {% endif %}
 </div>
+
+<span class="jq-post-delete-are-you-sure" style="display: none">{{ 'post.delete.are_you_sure'|trans() }}</span>

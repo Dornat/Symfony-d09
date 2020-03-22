@@ -22,7 +22,6 @@ if (!isAuthenticated) {
     });
 }
 
-console.log($mc.find('#login-form'));
 $mc.on('submit', '#login-form', function (e) {
     e.preventDefault();
     const $form = $(this);
@@ -75,8 +74,25 @@ $mc.find('.jq-post-view').on('click', function () {
         modal.find('.modal-content').html('');
         modal.find('.modal-content').append(data);
         modal.modal('show');
+
+        modal.find('.jq-post-delete').off('click');
+        modal.find('.jq-post-delete').on('click', function () {
+            const url = $(this).data('post-delete-url');
+
+            if (confirm($('.jq-post-delete-are-you-sure').text())) {
+                $.post(url, function(response) {
+                    if (response.status === 'ok') {
+                        modal.modal('hide');
+                        $mc.find('[data-post-id="' + response.post_id + '"]').remove();
+                    }
+                }).fail(function (data) {
+                    console.log(data);
+                });
+            }
+        });
     });
 });
+
 
 function jsonStringifyFormData($form) {
     const formData = {};
