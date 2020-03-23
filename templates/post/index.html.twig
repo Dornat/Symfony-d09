@@ -3,29 +3,5 @@
 {% block title %}{{ 'post.main'|trans() }}{% endblock %}
 
 {% block body %}
-    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-        {{ form_start(form, {'attr': {'id': 'post-form'}, 'action': path('post_new')}) }}
-        <div class="form-group">
-            {{ form_label(form.title) }}
-            {{ form_widget(form.title, {'full_name': 'title'}) }}
-        </div>
-
-        <div class="form-group">
-            {{ form_label(form.content) }}
-            {{ form_widget(form.content, {'full_name': 'content'}) }}
-        </div>
-        {{ form_widget(form.submit, {'attr': {'class': 'btn btn-primary'}}) }}
-        {{ form_end(form) }}
-    {% endif %}
-
-    {% if posts is not empty and posts is iterable %}
-        <div class="mt-5">
-            {% for post in posts %}
-                {% include 'post/_post.html.twig' %}
-            {% endfor %}
-        </div>
-    {% endif %}
-
-    {% include 'post/_toast_success.html.twig' %}
-    {% include 'post/_view_modal.html.twig' %}
+    {% include 'post/_content.html.twig' %}
 {% endblock %}

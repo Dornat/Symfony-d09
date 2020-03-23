@@ -26,19 +26,17 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link jq-home" href="{{ path('post_index') }}">{{ 'layout.nav.home'|trans() }}
+                            <a class="nav-link jq-home" href="{{ path('post_index') }}" data-content-url="{{ path('post_content') }}">{{ 'layout.nav.home'|trans() }}
                                 <span
                                         class="sr-only">(current)</span></a>
                         </li>
                     </ul>
 
                     <ul class="navbar-nav ml-auto">
-                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="{{ path('app_logout') }}">{{ 'layout.nav.logout'|trans() }}</a>
-                            </li>
-                        {% endif %}
+                        <li class="nav-item jq-logout" {% if is_granted('IS_AUTHENTICATED_FULLY') %}{% else %}style="display: none"{% endif %}>
+                            <a class="nav-link"
+                               href="{{ path('app_logout') }}">{{ 'layout.nav.logout'|trans() }}</a>
+                        </li>
 
                         <li class="nav-item">
                             {% set route = app.request.attributes.get('_route') %}
@@ -61,11 +59,13 @@
 
 
     <div class="container mt-5 mb-5">
-        {% if  not is_granted('IS_AUTHENTICATED_FULLY') %}
+        {% if not is_granted('IS_AUTHENTICATED_FULLY') %}
             <div id="login-form-container"></div>
         {% endif %}
 
-        {% block body %}{% endblock %}
+        <div id="content-wrapper">
+            {% block body %}{% endblock %}
+        </div>
     </div>
 </div>
 

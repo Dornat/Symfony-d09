@@ -25,6 +25,7 @@ use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticato
 use Symfony\Component\Security\Guard\PasswordAuthenticatedInterface;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 use Symfony\Component\Serializer\SerializerInterface as Serializer;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserAuthenticator extends AbstractFormLoginAuthenticator implements PasswordAuthenticatedInterface
 {
@@ -35,14 +36,25 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
     private $csrfTokenManager;
     private $passwordEncoder;
     private $serializer;
+    private $translator;
 
-    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, Serializer $serializer)
+    /**
+     * UserAuthenticator constructor.
+     * @param EntityManagerInterface $entityManager
+     * @param UrlGeneratorInterface $urlGenerator
+     * @param CsrfTokenManagerInterface $csrfTokenManager
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param Serializer $serializer
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, Serializer $serializer, TranslatorInterface $translator)
     {
         $this->entityManager = $entityManager;
         $this->urlGenerator = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
         $this->serializer = $serializer;
+        $this->translator = $translator;
     }
 
     public function supports(Request $request)
@@ -106,7 +118,7 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
             return new RedirectResponse($targetPath);
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_default'));
+        return new RedirectResponse($this->urlGenerator->generate('post_form_view'));
     }
 
     /**
@@ -117,9 +129,9 @@ class UserAuthenticator extends AbstractFormLoginAuthenticator implements Passwo
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         if ($exception instanceof BadCredentialsException) {
-            $message = 'Bad credentials.';
+            $message = $this->translator->trans('Invalid credentials.', [], 'security');
         } else {
-            $message = $exception->getMessage();
+            $message = $this->translator->trans($exception->getMessage(), [], 'security');
         }
 
         return new JsonResponse($this->serializer->serialize(['message' => $message], 'json'), 400, [], true);

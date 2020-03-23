@@ -1,0 +1,12 @@
+{% include 'post/_form.html.twig' %}
+
+{% if posts is not empty and posts is iterable %}
+    <div class="mt-5">
+        {% for post in posts %}
+            {% include 'post/_post.html.twig' %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+{% include 'post/_toast_success.html.twig' %}
+{% include 'post/_view_modal.html.twig' %}

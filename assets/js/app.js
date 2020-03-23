@@ -22,13 +22,25 @@ if (!isAuthenticated) {
     });
 }
 
+const url = new URL('http://127.0.0.1:8080/.well-known/mercure');
+url.searchParams.append('topic', 'new');
+url.searchParams.append('topic', 'delete');
+
+const eventSource = new EventSource(url);
+eventSource.onmessage = event => {
+    // Will be called every time an update is published by the server
+    console.log('event', JSON.parse(event.data));
+};
+
 $mc.on('submit', '#login-form', function (e) {
     e.preventDefault();
     const $form = $(this);
 
     $('.jq-post-form-error').remove();
     $.post($form.attr('action'), jsonStringifyFormData($form), function (data) {
-        $mc.html(data);
+        $mc.find('.jq-logout').show();
+        $mc.find('#login-form-container').remove();
+        $mc.find('#content-wrapper').prepend(data);
     }).fail(function (jqXHR) {
         const error = JSON.parse(jqXHR.responseText);
         const $alert = $('<div class="alert alert-danger mt-1 jq-post-form-error" role="alert"></div>');
@@ -37,15 +49,15 @@ $mc.on('submit', '#login-form', function (e) {
     });
 });
 
-$mc.find('#post-form').on('submit', function (e) {
+$mc.on('submit', '#post-form', function (e) {
     e.preventDefault();
     const $form = $(this);
 
     $('.jq-post-form-error').remove();
     $.post($form.attr('action'), jsonStringifyFormData($form), function (data) {
         if (data === 'ok') {
-            $.get($('.jq-home').attr('href'), function (data) {
-                $mc.html(data);
+            $.post($('.jq-home').data('content-url'), function (data) {
+                $mc.find('#content-wrapper').html(data);
                 $('.jq-toast-post-success').toast('show');
             });
         }
@@ -66,7 +78,7 @@ $mc.find('#post-form').on('submit', function (e) {
     });
 });
 
-$mc.find('.jq-post-view').on('click', function () {
+$mc.on('click', '.jq-post-view', function () {
     const url = $(this).data('post-url');
     const modal = $mc.find('#post-view-modal');
 
@@ -92,7 +104,6 @@ $mc.find('.jq-post-view').on('click', function () {
         });
     });
 });
-
 
 function jsonStringifyFormData($form) {
     const formData = {};
