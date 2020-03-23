@@ -32,7 +32,6 @@ eventSource.onmessage = ({data}) => {
 
     if (parsed.type === 'new') {
         $.post($('.jq-home').data('content-url') + '/' + parsed.id, function (response) {
-            $mc.find('#post-form')[0].reset();
             $mc.find('.jq-post-card').first().before(response);
         });
     } else if (parsed.type === 'delete') {
