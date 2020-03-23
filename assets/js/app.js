@@ -11,7 +11,7 @@ import $ from 'jquery';
 import 'popper.js';
 import 'bootstrap';
 
-$("body").tooltip({ selector: '[data-toggle=tooltip]' });
+$("body").tooltip({selector: '[data-toggle=tooltip]'});
 
 const $mc = $('#main-container');
 const isAuthenticated = $mc.data('is-authenticated');
@@ -27,9 +27,17 @@ url.searchParams.append('topic', 'new');
 url.searchParams.append('topic', 'delete');
 
 const eventSource = new EventSource(url);
-eventSource.onmessage = event => {
-    // Will be called every time an update is published by the server
-    console.log('event', JSON.parse(event.data));
+eventSource.onmessage = ({data}) => {
+    const parsed = JSON.parse(data);
+
+    if (parsed.type === 'new') {
+        $.post($('.jq-home').data('content-url') + '/' + parsed.id, function (response) {
+            $mc.find('#post-form')[0].reset();
+            $mc.find('.jq-post-card').first().before(response);
+        });
+    } else if (parsed.type === 'delete') {
+        $mc.find('[data-post-id="' + parsed.id + '"]').remove();
+    }
 };
 
 $mc.on('submit', '#login-form', function (e) {
@@ -56,10 +64,7 @@ $mc.on('submit', '#post-form', function (e) {
     $('.jq-post-form-error').remove();
     $.post($form.attr('action'), jsonStringifyFormData($form), function (data) {
         if (data === 'ok') {
-            $.post($('.jq-home').data('content-url'), function (data) {
-                $mc.find('#content-wrapper').html(data);
-                $('.jq-toast-post-success').toast('show');
-            });
+            $('.jq-toast-post-success').toast('show');
         }
     }).fail(function (jqXHR) {
         const errors = JSON.parse(jqXHR.responseText);
@@ -92,10 +97,9 @@ $mc.on('click', '.jq-post-view', function () {
             const url = $(this).data('post-delete-url');
 
             if (confirm($('.jq-post-delete-are-you-sure').text())) {
-                $.post(url, function(response) {
+                $.post(url, function (response) {
                     if (response.status === 'ok') {
                         modal.modal('hide');
-                        $mc.find('[data-post-id="' + response.post_id + '"]').remove();
                     }
                 }).fail(function (data) {
                     console.log(data);

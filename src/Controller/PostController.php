@@ -72,6 +72,20 @@ class PostController extends BaseController
     }
 
     /**
+     * @Route("/content/{id}", name="post_content_specific")
+     * @param Post $post
+     * @return JsonResponse
+     */
+    public function contentSpecific(Post $post)
+    {
+        return new JsonResponse(
+            $this->renderView('post/_post.html.twig', [
+                'post' => $post
+            ])
+        );
+    }
+
+    /**
      * @Route("/form-view", name="post_form_view")
      * @return JsonResponse
      */
@@ -90,9 +104,10 @@ class PostController extends BaseController
     /**
      * @Route("/new", name="post_new", methods={"POST"})
      * @param Request $request
+     * @param PublisherInterface $publisher
      * @return JsonResponse
      */
-    public function new(Request $request)
+    public function new(Request $request, PublisherInterface $publisher)
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
@@ -118,6 +133,12 @@ class PostController extends BaseController
         $em = $this->getEntityManager();
         $em->persist($post);
         $em->flush();
+
+        $update = new Update(
+            'new',
+            json_encode(['id' => $post->getId(), 'type' => 'new'])
+        );
+        $publisher($update);
 
         return new JsonResponse('ok');
     }
@@ -153,7 +174,7 @@ class PostController extends BaseController
 
         $update = new Update(
             'delete',
-            json_encode(['id' => $postId])
+            json_encode(['id' => $postId, 'type' => 'delete'])
         );
         $publisher($update);
 
